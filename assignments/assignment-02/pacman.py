@@ -3,124 +3,121 @@ import collections
 def get_map():
     return [
         ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-        ['#', 'F', '.', '.', 'F', '.', '.', '.', '.', 'P', '#'],
-        ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
+        ['.', 'F', '.', '.', 'F', '.', '.', '.', '.', 'P', '.'],
+        ['.', '.', '#', '#', '.', '.', '.', '#', '#', '.', '.'],
         ['#', '.', '#', '.', '.', '#', 'F', '.', '#', '.', '#'],
         ['#', '.', '.', 'F', '.', '#', '.', '.', '.', '.', '#'],
-        ['#', '.', '.', '#', '#', '#', '#', '#', 'F', '.', '#'],
+        ['.', '.', '.', '#', '#', '#', '#', '#', 'F', '.', '.'],
         ['#', '.', '.', '.', '.', '#', 'F', '.', '.', '.', '#'],
         ['#', '.', '#', '.', 'F', '#', '.', '.', '#', '.', '#'],
-        ['#', '.', '#', '#', '.', '.', '.', '#', '#', '.', '#'],
-        ['#', '.', 'F', '.', '.', '.', '.', '.', '.', '.', '#'],
+        ['.', '.', '#', '#', '.', '.', '.', '#', '#', '.', '.'],
+        ['.', '.', 'F', '.', '.', '.', '.', '.', '.', '.', '.'],
         ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
     ]
-    
+
 def print_map(map):
-    print("Map:")
+    print(f"Current map:")
     for row in map:
         for col in row:
             print(f"{col} ", end="")
         print()
-    return
 
-def food_count(map):
-    foods = 0
-    for row in map:
-        for col in row:
-            if col == 'F':
-                foods += 1
-    return foods
-
-def get_pacman_loc(map):
+def find_pacman(map):
     for i, row in enumerate(map):
         for j, col in enumerate(row):
             if col == 'P':
                 return i, j
     return None
 
+def count_foods(map):
+    foods = 0
+    for row in map:
+        for col in row:
+            if col == 'F':
+                foods += 1  
+    return foods
+
 def bfs(map, loc):
-    q = collections.deque()
-    q.append(loc)
-    
-    visited = {loc}
-    
     rows = len(map)
     cols = len(map[0])
     
+    q = collections.deque()
+    q.append((loc, [loc]))
+    
     directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-    depth = 0
-    curr_level_size = len(q)
+    visited = {loc}
     
     while q:
-        curr = q.popleft()
+        curr, path = q.popleft()
         curr_i, curr_j = curr
         
         if map[curr_i][curr_j] == 'F':
-            return curr, depth
+            return curr, path
         
         for d_i, d_j in directions:
-            nbr_i = curr_i + d_i
-            nbr_j = curr_j + d_j
+            nbr_i, nbr_j = curr_i + d_i, curr_j + d_j
+            nbr_i, nbr_j = (nbr_i + rows) % rows, (nbr_j + cols) % cols
             nbr = nbr_i, nbr_j
             
-            if (0 <= nbr_i < rows and 
-                0 <= nbr_j < cols and
-                map[nbr_i][nbr_j] != '#' and
+            if (map[nbr_i][nbr_j] != '#' and
                 nbr not in visited):
-                q.append(nbr)
+                nbr_path = path + [nbr]
+                q.append((nbr, nbr_path))
                 visited.add(nbr)
-        
-        curr_level_size -= 1
-        if curr_level_size == 0:
-            curr_level_size = len(q)
-            depth += 1
-        
+                
     return None
-    
-def get_next_nearest_food(map, loc):
-    return bfs(map, loc)
 
-def update_pacman_loc(map, pacman_loc, food_loc):
-    curr_i, curr_j = pacman_loc
-    next_i, next_j = food_loc
-    map[curr_i][curr_j] = '.'
-    map[next_i][next_j] = 'P'
+def update_map(map, pacman_loc, food_loc):
+    loc_i, loc_j = pacman_loc
+    map[loc_i][loc_j] = '.'
+    
+    food_i, food_j = food_loc
+    map[food_i][food_j] = 'P'
+    
     return food_loc
 
+def eat_foods(map, pacman_loc, foods):
+    total_distance = 0
+    
+    while foods > 0:
+        next_food, path = bfs(map, pacman_loc)
+        if next_food is None:
+            break
+        
+        distance = len(path) - 1
+        total_distance += distance
+        print(f"Next food found at {next_food}")
+        print(f"Path: {path}")
+        print(f"distance: {distance}")
+        pacman_loc = update_map(map, pacman_loc, next_food)
+        
+        foods -= 1
+        print_map(map)
+        print()
+    
+    print(f"All foods are eaten, total distance {total_distance}")
+    return
+    
 def main():
     map = get_map()
     print_map(map)
     
-    pacman_loc = get_pacman_loc(map)
-    
+    pacman_loc = find_pacman(map)
     if pacman_loc is None:
-        print(f"Pacman not found in the map!\n")
+        print(f"No pacman is found!")
         return
     else:
-        print(f"Pacman found at: {pacman_loc}")
+        print(f"Pacamn found at: {pacman_loc}")
     
-    foods = food_count(map)
+    foods = count_foods(map)
     if foods == 0:
-        print(f"No food found in the map!\n")
+        print(f"No food in the map!")
         return
     else:
-        print(f"Food found: {foods}")
+        print(f"{foods} in the map!")
     
-    total_distance = 0
-    while foods > 0:
-        next_food, distance = get_next_nearest_food(map, pacman_loc)
-        print(f"Next food at: {next_food} at distance {distance}")
-        
-        pacman_loc = update_pacman_loc(map, pacman_loc, next_food)
-        print_map(map)
-        
-        total_distance += distance
-        foods -= 1
-        print(f"Food remaining: {foods}\n")
-    
-    print(f"Total distance covered to eat all food: {total_distance}")
-    return
-        
+    print()
+    eat_foods(map, pacman_loc, foods)
 
 if __name__ == '__main__':
     main()

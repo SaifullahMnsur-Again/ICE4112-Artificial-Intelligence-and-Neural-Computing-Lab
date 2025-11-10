@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perceptron Model Flow</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .flow-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .step-header {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .step-content {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .step-content ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .step-content li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 10px;
+        }
+
+        .step-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .step-content .code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #c0392b;
+        }
+
+        .arrow {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #bdc3c7;
+            margin: -10px 0;
+            font-weight: bold;
+        }
+
+        .loop {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #fdfefe;
+        }
+
+        .loop-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2980b9;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Perceptron Model Implementation Flow</h1>
+
+    <div class="flow-container">
+        
+        <div class="step" id="init">
+            <div class="step-header">1. Initialization</div>
+            <div class="step-content">
+                <p>Create the Perceptron instance. This sets up the initial state.</p>
+                <ul>
+                    <li>Initialize <strong>Weights (w)</strong>: A vector of random values (e.g., between -1 and 1). One weight for each input feature.
+                        <br><span class="code">self.weights = 2 * np.random.rand(input_size) - 1</span>
+                    </li>
+                    <li>Initialize <strong>Bias (b)</strong>: A single random value.
+                        <br><span class="code">self.bias = np.random.rand(1)</span>
+                    </li>
+                    <li>Set <strong>Learning Rate (α)</strong>: A small constant that controls the step size of adjustments (e.g., 0.1).
+                        <br><span class="code">self.learning_rate = learning_rate</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step" id="train">
+            <div class="step-header">2. Training Loop</div>
+            <div class="step-content">
+                <p>Iteratively adjust the weights and bias to minimize the error. This is done by calling <span class="code">perceptron.train()</span>.</p>
+                
+                <div class="loop">
+                    <div class="loop-header">While Average Error > Max Error:</div>
+                    
+                    <p><strong>For each training example (inputs, target):</strong></p>
+                    <ol>
+                        <li>
+                            <strong>Forward Pass (Predict):</strong>
+                            <br>Calculate the weighted sum and pass it through the activation function (Sigmoid).
+                            <br><span class="code">net_input = np.dot(inputs, self.weights) + self.bias</span>
+                            <br><span class="code">prediction = self.sigmoid(net_input)</span>
+                        </li>
+                        <br>
+                        <li>
+                            <strong>Calculate Error:</strong>
+                            <br>Find the difference between the desired target and the actual prediction.
+                            <br><span class="code">error = target_output - prediction</span>
+                        </li>
+                        <br>
+                        <li>
+                            <strong>Update Parameters (Backpropagation):</strong>
+                            <br>Adjust weights and bias based on the error and learning rate.
+                            <br><span class="code">adjustment = self.learning_rate * error</span>
+                            <br><span class="code">self.weights += adjustment * inputs</span>
+                            <br><span class="code">self.bias += adjustment</span>
+                        </li>
+                    </ol>
+                </div>
+                
+                <p>Repeat this process for many <strong>epochs</strong> (passes through the entire dataset) until the model's average error is acceptably low.</p>
+            </div>
+        </div>
+
+        <div class="arrow">↓</div>
+
+        <div class="step" id="eval">
+            <div class="step-header">3. Evaluation & Prediction</div>
+            <div class="step-content">
+                <p>Once training is finished, use the tuned weights and bias to make predictions on new or existing data.</p>
+                <ul>
+                    <li>
+                        <strong>Make Predictions:</strong> Pass the test data through the <span class="code">perceptron.predict()</span> method.
+                    </li>
+                    <li>
+                        <strong>Apply Threshold:</strong> Convert the Sigmoid output (a probability between 0 and 1) into a binary class (0 or 1).
+                        <br><span class="code">output = 1 if prediction > 0.5 else 0</span>
+                    </li>
+                    <li>
+                        <strong>Calculate Metrics:</strong> Compare the final predictions against the true targets to measure performance using tools like Accuracy, Confusion Matrix, etc.
+                        <br><span class="code">accuracy = accuracy_score(targets, predictions)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

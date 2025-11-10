@@ -3,56 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perceptron Model Flow</title>
+    <title>Perceptron Model Flow (Updated)</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-light: #ecf5fb;
+            --secondary-color: #2ecc71;
+            --text-dark: #2c3e50;
+            --text-light: #5d6d7e;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #e1e8ed;
+            --code-bg: #ecf0f1;
+            --code-color: #c0392b;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            display: grid;
+            place-items: center;
+            min-height: 100vh;
             padding: 2rem;
-            flex-direction: column;
+            box-sizing: border-box;
         }
 
         h1 {
-            color: #2c3e50;
-            border-bottom: 3px solid #3498db;
+            color: var(--text-dark);
+            border-bottom: 3px solid var(--primary-color);
             padding-bottom: 10px;
+            text-align: center;
         }
 
         .flow-container {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             margin: 0 auto;
         }
 
         .step {
-            background-color: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px 30px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         .step:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
         }
 
         .step-header {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 600;
-            color: #3498db;
-            margin-bottom: 15px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
         }
+        
+        .step-header::before {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        #init .step-header::before { content: '⚙️'; }
+        #train .step-header::before { content: '🔄'; }
+        #eval .step-header::before { content: '🎯'; }
 
-        .step-content {
-            font-size: 1rem;
-            line-height: 1.6;
+        .step-content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
         }
 
         .step-content ul {
@@ -62,26 +87,30 @@
 
         .step-content li {
             position: relative;
-            padding-left: 30px;
-            margin-bottom: 10px;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+            line-height: 1.6;
         }
 
         .step-content li::before {
-            content: '✓';
+            content: '➔';
             position: absolute;
             left: 0;
             top: 0;
-            color: #2ecc71;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 1.2rem;
         }
         
-        .step-content .code {
+        .code {
             font-family: "Courier New", Courier, monospace;
-            background-color: #ecf0f1;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #c0392b;
+            background-color: var(--code-bg);
+            padding: 3px 7px;
+            border-radius: 5px;
+            color: var(--code-color);
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
         .arrow {
@@ -92,21 +121,85 @@
             font-weight: bold;
         }
 
-        .loop {
-            border: 2px dashed #3498db;
+        .training-loop {
+            border: 2px dashed var(--primary-color);
             padding: 20px;
             border-radius: 8px;
-            margin: 20px 0;
-            background: #fdfefe;
+            margin: 25px 0;
+            background: var(--primary-light);
         }
 
         .loop-header {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            color: #2980b9;
+            color: var(--text-dark);
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
+        
+        .sub-step {
+            margin-bottom: 15px;
+            padding-left: 35px;
+            position: relative;
+        }
+
+        .sub-step strong {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+        }
+
+        .sub-step p {
+            margin: 5px 0 0 0;
+            font-size: 1rem;
+        }
+
+        .sub-step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 0.9rem;
+        }
+
+        /* --- STYLES FOR THE NEW GITHUB LINK --- */
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .github-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--text-dark);
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .github-button:hover {
+            background-color: #4e5d6c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .github-button::before {
+            content: '🔗'; /* You can also use a GitHub icon here */
+            margin-right: 10px;
+        }
+        /* --- END OF NEW STYLES --- */
+
     </style>
 </head>
 <body>
@@ -118,16 +211,25 @@
         <div class="step" id="init">
             <div class="step-header">1. Initialization</div>
             <div class="step-content">
-                <p>Create the Perceptron instance. This sets up the initial state.</p>
+                <p>
+                    First, we set up the Perceptron. Think of this as giving the
+                    model a "blank brain" with some random starting guesses.
+                </p>
                 <ul>
-                    <li>Initialize <strong>Weights (w)</strong>: A vector of random values (e.g., between -1 and 1). One weight for each input feature.
+                    <li>
+                        <strong>Initialize Weights (w):</strong> 
+                        A set of random numbers. We need one weight for every input feature.
                         <br><span class="code">self.weights = 2 * np.random.rand(input_size) - 1</span>
                     </li>
-                    <li>Initialize <strong>Bias (b)</strong>: A single random value.
+                    <li>
+                        <strong>Initialize Bias (b):</strong> 
+                        A single random number that helps shift the output.
                         <br><span class="code">self.bias = np.random.rand(1)</span>
                     </li>
-                    <li>Set <strong>Learning Rate (α)</strong>: A small constant that controls the step size of adjustments (e.g., 0.1).
-                        <br><span class="code">self.learning_rate = learning_rate</span>
+                    <li>
+                        <strong>Set Learning Rate (α):</strong> 
+                        A small number that controls how *fast* the model learns.
+                        <br><span class="code">self.learning_rate = 0.1</span>
                     </li>
                 </ul>
             </div>
@@ -136,64 +238,82 @@
         <div class="arrow">↓</div>
 
         <div class="step" id="train">
-            <div class="step-header">2. Training Loop</div>
+            <div class="step-header">2. The Training Loop</div>
             <div class="step-content">
-                <p>Iteratively adjust the weights and bias to minimize the error. This is done by calling <span class="code">perceptron.train()</span>.</p>
+                <p>
+                    This is where the learning happens! We show the model our data
+                    (inputs and correct answers) over and over, letting it adjust
+                    itself each time.
+                </p>
                 
-                <div class="loop">
-                    <div class="loop-header">While Average Error > Max Error:</div>
+                <div class="training-loop">
+                    <div class="loop-header">This happens for each data point:</div>
                     
-                    <p><strong>For each training example (inputs, target):</strong></p>
-                    <ol>
-                        <li>
-                            <strong>Forward Pass (Predict):</strong>
-                            <br>Calculate the weighted sum and pass it through the activation function (Sigmoid).
-                            <br><span class="code">net_input = np.dot(inputs, self.weights) + self.bias</span>
-                            <br><span class="code">prediction = self.sigmoid(net_input)</span>
-                        </li>
+                    <div class="sub-step" data-step="A">
+                        <strong>Make a Guess (Predict)</strong>
+                        <p>Feed an input into the Perceptron to see what it predicts.</p>
+                        <span class="code">prediction = self.sigmoid(np.dot(inputs, self.weights) + self.bias)</span>
+                    </div>
+
+                    <div class="sub-step" data-step="B">
+                        <strong>Check the Guess (Calculate Error)</strong>
+                        <p>Compare the prediction to the *actual* target answer.</p>
+                        <span class="code">error = target_output - prediction</span>
+                    </div>
+
+                    <div class="sub-step" data-step="C">
+                        <strong>Learn from the Mistake (Update)</strong>
+                        <p>Slightly adjust the weights and bias based on the error.</p>
+                        <span class="code">self.weights += self.learning_rate * error * inputs</span>
                         <br>
-                        <li>
-                            <strong>Calculate Error:</strong>
-                            <br>Find the difference between the desired target and the actual prediction.
-                            <br><span class="code">error = target_output - prediction</span>
-                        </li>
-                        <br>
-                        <li>
-                            <strong>Update Parameters (Backpropagation):</strong>
-                            <br>Adjust weights and bias based on the error and learning rate.
-                            <br><span class="code">adjustment = self.learning_rate * error</span>
-                            <br><span class="code">self.weights += adjustment * inputs</span>
-                            <br><span class="code">self.bias += adjustment</span>
-                        </li>
-                    </ol>
+                        <span class="code">self.bias += self.learning_rate * error</span>
+                    </div>
                 </div>
                 
-                <p>Repeat this process for many <strong>epochs</strong> (passes through the entire dataset) until the model's average error is acceptably low.</p>
+                <p>
+                    We repeat this A-B-C process for every data point. One full
+                    pass through the *entire* dataset is called an <strong>Epoch</strong>.
+                    We run many epochs until the model's average error is very low.
+                </p>
             </div>
         </div>
 
         <div class="arrow">↓</div>
 
         <div class="step" id="eval">
-            <div class="step-header">3. Evaluation & Prediction</div>
+            <div class="step-header">3. Evaluation &amp; Prediction</div>
             <div class="step-content">
-                <p>Once training is finished, use the tuned weights and bias to make predictions on new or existing data.</p>
+                <p>
+                    Once training is complete, the model is ready. We use its
+                    (now "smart") weights and bias to make predictions on new,
+                    unseen data.
+                </P>
                 <ul>
                     <li>
-                        <strong>Make Predictions:</strong> Pass the test data through the <span class="code">perceptron.predict()</span> method.
+                        <strong>Make Predictions:</strong> 
+                        Feed new data to the <span class="code">predict()</span> method. It will output a
+                        probability (e.g., 0.9).
                     </li>
                     <li>
-                        <strong>Apply Threshold:</strong> Convert the Sigmoid output (a probability between 0 and 1) into a binary class (0 or 1).
-                        <br><span class="code">output = 1 if prediction > 0.5 else 0</span>
+                        <strong>Apply a Threshold:</strong> 
+                        Convert the probability into a clear 0 or 1. (e.g., if 0.9 > 0.5, classify as 1).
                     </li>
                     <li>
-                        <strong>Calculate Metrics:</strong> Compare the final predictions against the true targets to measure performance using tools like Accuracy, Confusion Matrix, etc.
-                        <br><span class="code">accuracy = accuracy_score(targets, predictions)</span>
+                        <strong>Measure Success:</strong> 
+                        We check how many predictions the model got right
+                        using a metric like **Accuracy**.
                     </li>
                 </ul>
             </div>
         </div>
 
+    </div>
+
+    <div class="github-link">
+        <p>All assignment codes are stored here:</p>
+        <a href="https://github.com/SaifullahMnsur-Again/ICE4112-AI-Lab" class="github-button" target="_blank" rel="noopener noreferrer">
+            View Source Code
+        </a>
     </div>
 
 </body>

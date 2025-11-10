@@ -250,7 +250,7 @@
                     <div class="loop-header">This happens for each data point:</div>
                     
                     <div class="sub-step" data-step="A">
-                        <strong>Make a Guess (Predict)</strong>
+                        <strong>Forward Pass: Make a Guess (Predict)</strong>
                         <p>Feed an input into the Perceptron to see what it predicts.</p>
                         <span class="code">prediction = self.sigmoid(np.dot(inputs, self.weights) + self.bias)</span>
                     </div>
@@ -262,7 +262,7 @@
                     </div>
 
                     <div class="sub-step" data-step="C">
-                        <strong>Learn from the Mistake (Update)</strong>
+                        <strong>Backpropagation: Learn from the Mistake (Update)</strong>
                         <p>Slightly adjust the weights and bias based on the error.</p>
                         <span class="code">self.weights += self.learning_rate * error * inputs</span>
                         <br>
